@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>倒數計時</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #timer {
+            font-size: 48px;
+            margin: 20px;
+        }
+        #message {
+            display: none;
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>倒數計時開始</h1>
+    <div>
+        <label for="minutes">分鐘: </label>
+        <input type="number" id="minutes" min="0" value="0">
+        <label for="seconds">秒鐘: </label>
+        <input type="number" id="seconds" min="0" max="59" value="0">
+        <button onclick="startTimer()">開始計時</button>
+    </div>
+    <div id="timer"></div>
+    <div id="message">
+        <img src="S__95043610.jpg" alt="你該休息了!">
+        <h2>你該休息了!</h2>
+    </div>
+    <audio id="countdown-music" src="countdown_music.mp3"></audio>
+
+    <script>
+        let countdown;
+
+        function startTimer() {
+            const minutes = parseInt(document.getElementById('minutes').value);
+            const seconds = parseInt(document.getElementById('seconds').value);
+            const totalTime = (minutes * 60) + seconds;
+            clearInterval(countdown);
+            startCountdown(totalTime);
+        }
+
+        function startCountdown(totalTime) {
+            const timerDisplay = document.getElementById('timer');
+            const messageDisplay = document.getElementById('message');
+            const countdownMusic = document.getElementById('countdown-music');
+            const endTime = Date.now() + totalTime * 1000;
+
+            countdownMusic.play();
+
+            countdown = setInterval(() => {
+                const secondsLeft = Math.round((endTime - Date.now()) / 1000);
+
+                if (secondsLeft < 0) {
+                    clearInterval(countdown);
+                    timerDisplay.style.display = 'none';
+                    messageDisplay.style.display = 'block';
+                    countdownMusic.pause();
+                    countdownMusic.currentTime = 0;
+                    return;
+                }
+
+                const minutesLeft = Math.floor(secondsLeft / 60);
+                const remainingSeconds = secondsLeft % 60;
+                timerDisplay.textContent = `${minutesLeft}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
